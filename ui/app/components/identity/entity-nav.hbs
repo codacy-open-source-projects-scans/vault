@@ -1,0 +1,54 @@
+{{!
+  Copyright IBM Corp. 2016, 2025
+  SPDX-License-Identifier: BUSL-1.1
+}}
+
+<Page::Header @title={{titleize (pluralize @identityType)}} @description={{this.description}}>
+  <:breadcrumbs>
+    <Page::Breadcrumbs
+      @breadcrumbs={{array
+        (hash label="Vault" route="vault.cluster.dashboard" icon="vault")
+        (hash label=(titleize (pluralize @identityType)))
+      }}
+    />
+  </:breadcrumbs>
+</Page::Header>
+
+<nav class="tabs" aria-label="navigation for entities">
+  <ul>
+    <li>
+      <LinkTo @route={{concat "vault.cluster.access.identity." (pluralize @identityType) ".index"}}>
+        {{capitalize (pluralize @identityType)}}
+      </LinkTo>
+    </li>
+    <li>
+      <LinkTo @route={{concat "vault.cluster.access.identity." (pluralize @identityType) ".aliases.index"}}>
+        Aliases
+      </LinkTo>
+    </li>
+  </ul>
+</nav>
+
+<Toolbar>
+  {{#if @model.meta.total}}
+    <ToolbarFilters>
+      <Identity::LookupInput @type={{@identityType}} />
+    </ToolbarFilters>
+  {{/if}}
+  <ToolbarActions>
+    {{#if (eq @identityType "entity")}}
+      <ToolbarLink @route="vault.cluster.access.identity.entities.merge" data-test-entity-merge-link={{true}}>
+        Merge
+        {{pluralize @identityType}}
+      </ToolbarLink>
+    {{/if}}
+    <ToolbarLink
+      @route={{concat "vault.cluster.access.identity." (pluralize @identityType) ".create"}}
+      @type="add"
+      data-test-entity-create-link={{true}}
+    >
+      Create
+      {{@identityType}}
+    </ToolbarLink>
+  </ToolbarActions>
+</Toolbar>

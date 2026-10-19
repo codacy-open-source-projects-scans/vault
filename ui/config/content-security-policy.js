@@ -1,0 +1,35 @@
+/**
+ * Copyright IBM Corp. 2016, 2025
+ * SPDX-License-Identifier: BUSL-1.1
+ */
+
+module.exports = function (environment) {
+  const policy = {
+    'default-src': ["'none'"],
+    'script-src': ["'self'"],
+    'font-src': ["'self'"],
+    'connect-src': ["'self'"],
+    'img-src': ["'self'", 'data:'],
+    'style-src': ["'self'"],
+    'media-src': ["'self'"],
+    'form-action': ["'none'"],
+  };
+
+  // Segment event pipeline and integration bundle fetches
+  policy['connect-src'].push('https://api.segment.io');
+  policy['connect-src'].push('https://cdn.segment.com');
+  // Amplitude integration bundle — loaded at runtime by Segment from cdn.segment.com
+  policy['script-src'].push('https://cdn.segment.com');
+
+  if (environment === 'test' || environment === 'development') {
+    policy['style-src'].push("'unsafe-inline'");
+  }
+
+  return {
+    delivery: ['header', 'meta'],
+    enabled: environment !== 'production',
+    failTests: true,
+    policy,
+    reportOnly: false,
+  };
+};

@@ -1,0 +1,19 @@
+{{!
+  Copyright IBM Corp. 2016, 2026
+  SPDX-License-Identifier: BUSL-1.1
+}}
+
+<Hds::ApplicationState class="top-padding-32 is-marginless" data-test-oidc-landing as |A|>
+  <A.Header @title="No OIDC Provider configurations" @titleTag="h2" data-test-empty-state-title />
+  <A.Body
+    @text="Configure Vault to act as an OIDC identity provider and offer Vault's authentication methods as a source of identity to client applications."
+  />
+  <A.Footer as |F|>
+    <F.LinkStandalone
+      @icon="docs-link"
+      @iconPosition="trailing"
+      @text="View documentation"
+      @href={{doc-link "/vault/docs/secrets/identity/oidc-provider"}}
+    />
+  </A.Footer>
+</Hds::ApplicationState>

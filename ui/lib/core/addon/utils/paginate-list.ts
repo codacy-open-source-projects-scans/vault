@@ -1,0 +1,80 @@
+/**
+ * Copyright IBM Corp. 2016, 2025
+ * SPDX-License-Identifier: BUSL-1.1
+ */
+
+import config from 'vault/config/environment';
+
+const { DEFAULT_PAGE_SIZE } = config.APP;
+
+export type PaginateOptions = {
+  page?: number;
+  pageSize?: number;
+  filter?: string;
+  filterKey?: string | string[]; // when an array, an item matches if any of the keys match
+};
+export type PaginatedMetadata = {
+  meta: {
+    currentPage: number;
+    lastPage: number;
+    nextPage: number;
+    prevPage: number;
+    total: number;
+    filteredTotal: number;
+    totalItems: number;
+    pageSize: number;
+  };
+};
+
+/**
+ * Util to paginate data set based on page number and size
+ * If filter is provided, it will filter the data prior to paginating
+ */
+
+export function paginate<T>(data: T[], options: PaginateOptions = {}) {
+  const { page = 1, pageSize = DEFAULT_PAGE_SIZE, filter, filterKey } = options;
+
+  if (Array.isArray(data)) {
+    const filterKeys = Array.isArray(filterKey) ? filterKey : filterKey ? [filterKey] : [];
+    const matchesFilter = (value: unknown, filterText: string) =>
+      typeof value === 'string' && value.toLowerCase().includes(filterText.toLowerCase());
+
+    let filteredData = filter
+      ? data.filter((item) => {
+          if (!filterKeys.length) {
+            return matchesFilter(item, filter);
+          }
+          return filterKeys.some((key) => matchesFilter((item as Record<string, unknown>)[key], filter));
+        })
+      : [...data];
+
+    const filteredTotal = filteredData.length;
+    const lastPage = Math.ceil(filteredTotal / pageSize);
+    // Verify that the page number does not go out of bounds, if so adjust to show
+    // the first page of results
+    const currentPage = page > lastPage ? 1 : page;
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    filteredData = filteredData.slice(start, end);
+    // add meta data previously from lazyPaginatedQuery since components expect it
+    Object.defineProperty(filteredData, 'meta', {
+      value: {
+        currentPage,
+        lastPage,
+        nextPage: page + 1,
+        prevPage: page - 1,
+        total: data.length,
+        filteredTotal,
+        // totalItems is the correct count to pass to Hds::Pagination::Numbered @totalItems:
+        // when a filter is active it reflects only matching items; otherwise the full dataset size.
+        totalItems: filter ? filteredTotal : data.length,
+        pageSize,
+      },
+      writable: false,
+    });
+
+    return filteredData as T[] & PaginatedMetadata;
+  }
+
+  return data;
+}

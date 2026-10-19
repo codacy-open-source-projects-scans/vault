@@ -1,0 +1,15 @@
+{{!
+  Copyright IBM Corp. 2016, 2025
+  SPDX-License-Identifier: BUSL-1.1
+}}
+
+<Sidebar::Nav::Reporting />
+
+<LicenseInfo
+  @startTime={{this.model.start_time}}
+  @expirationTime={{this.model.expiration_time}}
+  @licenseId={{this.model.license_id}}
+  @features={{this.model.features}}
+  @autoloaded={{this.model.autoloaded}}
+  @performanceStandbyCount={{this.model.performance_standby_count}}
+/>

@@ -1,0 +1,40 @@
+{{!
+  Copyright IBM Corp. 2016, 2025
+  SPDX-License-Identifier: BUSL-1.1
+}}
+
+<Hds::Dropdown ...attributes as |D|>
+  <D.ToggleButton @text={{concat "Version " (or @displayVersion "current")}} @color="secondary" data-test-version-dropdown />
+  {{#each (sorted-versions @metadata.versions) as |versionData|}}
+    {{#let (this.status versionData) as |status|}}
+      {{#if @onSelect}}
+        <D.Interactive
+          disabled={{status.disabled}}
+          {{on "click" (fn @onSelect versionData.version D.close)}}
+          data-test-version={{versionData.version}}
+        >
+          Version
+          {{versionData.version}}
+          {{#if status.icon}}
+            <Hds::Icon @name={{status.icon}} class="{{status.class}} is-pulled-right" />
+          {{/if}}
+        </D.Interactive>
+      {{else}}
+        <D.Interactive
+          @route={{@route}}
+          @models={{@models}}
+          @query={{hash version=versionData.version}}
+          {{on "click" (fn @onClose D.close)}}
+          class={{if (loose-equal versionData.version @displayVersion) "is-selected-version"}}
+          data-test-version={{versionData.version}}
+        >
+          Version
+          {{versionData.version}}
+          {{#if status.icon}}
+            <Hds::Icon @name={{status.icon}} class="{{status.class}} is-pulled-right" />
+          {{/if}}
+        </D.Interactive>
+      {{/if}}
+    {{/let}}
+  {{/each}}
+</Hds::Dropdown>

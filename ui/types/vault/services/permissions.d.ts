@@ -1,0 +1,22 @@
+/**
+ * Copyright IBM Corp. 2016, 2025
+ * SPDX-License-Identifier: BUSL-1.1
+ */
+
+import Service from '@ember/service';
+
+interface PathsResponse {
+  [key: string]: {
+    capabilities: string[];
+  };
+}
+export default class PermissionsService extends Service {
+  exactPaths: PathsResponse | null;
+  globPaths: PathsResponse | null;
+  canViewAll: boolean | null;
+  permissionsBanner: string | null;
+  chrootNamespace: string | null | undefined;
+  hasPermission: (pathName: string, capabilities?: Array<string | null>) => boolean;
+  hasPermissionBeneath: (pathName: string, capabilities: string[], excludedSubpaths?: string[]) => boolean;
+  hasNavPermission: (navItem: string, routeParams?: string | string[], requireAll?: boolean) => boolean;
+}

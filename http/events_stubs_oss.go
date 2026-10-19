@@ -1,0 +1,17 @@
+// Copyright IBM Corp. 2016, 2025
+// SPDX-License-Identifier: BUSL-1.1
+
+//go:build !enterprise
+
+package http
+
+import (
+	"net/http"
+
+	"github.com/hashicorp/vault/sdk/logical"
+	"github.com/hashicorp/vault/vault"
+)
+
+func entHandleEventsSubscribe(core *vault.Core, req *logical.Request) http.Handler {
+	return nil
+}

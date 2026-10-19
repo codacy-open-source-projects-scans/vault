@@ -1,0 +1,34 @@
+{{!
+  Copyright IBM Corp. 2016, 2025
+  SPDX-License-Identifier: BUSL-1.1
+}}
+
+{{#if (has-feature "Namespaces")}}
+  <Page::Header @title="Create a Namespace">
+    <:breadcrumbs>
+      <Page::Breadcrumbs
+        @breadcrumbs={{array
+          (hash label="Vault" icon="vault" route="vault.cluster.dashboard")
+          (hash label="Namespaces" route="vault.cluster.access.namespaces.index")
+          (hash label="Create a Namespace")
+        }}
+      />
+    </:breadcrumbs>
+  </Page::Header>
+  <form aria-label="create namespace form" {{on "submit" (perform this.save)}}>
+    <div class="box is-sideless is-fullwidth is-marginless">
+      <MessageError @errorMessage={{this.errorMessage}} data-test-edit-form-error />
+      <NamespaceReminder @mode="save" />
+      {{#each this.model.formFields as |field|}}
+        <FormField data-test-field @attr={{field}} @model={{this.model}} @modelValidations={{this.modelValidations}} />
+      {{/each}}
+    </div>
+    <FormSaveButtons
+      @isSaving={{this.save.isRunning}}
+      @saveButtonText="Save"
+      @cancelLinkParams={{array "vault.cluster.access.namespaces.index"}}
+    />
+  </form>
+{{else}}
+  <UpgradePage @title="Namespaces" @minimumEdition="Vault Enterprise Pro" />
+{{/if}}

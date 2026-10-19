@@ -1,0 +1,64 @@
+{{!
+  Copyright IBM Corp. 2016, 2026
+  SPDX-License-Identifier: BUSL-1.1
+}}
+
+<Hds::Alert @type="inline" @color="warning" as |A|>
+  <A.Title class="alert-title">Vault is sealed</A.Title>
+</Hds::Alert>
+{{#if this.showJoinForm}}
+  <div class="box is-marginless is-shadowless">
+    <h2 class="title is-5" data-test-join-header>
+      Join an existing Raft cluster
+    </h2>
+    <form aria-label="join raft cluster form" {{on "submit" (perform this.save)}}>
+      <div class="box is-sideless is-fullwidth is-marginless">
+        <MessageError @errorMessage={{this.errorMessage}} />
+        {{#each this.form.formFields as |field|}}
+          <FormField data-test-field @attr={{field}} @model={{this.form}} @modelValidations={{this.modelValidations}} />
+        {{/each}}
+      </div>
+      <FormSaveButtons
+        @isSaving={{this.save.isRunning}}
+        @saveButtonText="Join"
+        @cancelButtonText="Back"
+        @includeBox={{false}}
+        @onCancel={{action "cancel"}}
+      />
+    </form>
+  </div>
+{{else}}
+  <form aria-label="raft storage setup preference form" onsubmit={{action "advanceFirstScreen"}} data-test-join-choice>
+    <div class="box is-marginless is-shadowless">
+      <h2 class="title is-6">
+        This server is configured to use Raft Storage.
+        <br />
+        <br />
+        How do you want to get started?
+      </h2>
+      <div class="has-bottom-margin-s">
+        <RadioButton
+          id="join"
+          name="setup-pref"
+          @value="join"
+          @groupValue={{this.preference}}
+          @onChange={{fn (mut this.preference)}}
+        />
+        <label for="join">Join an existing Raft cluster</label>
+      </div>
+      <div>
+        <RadioButton
+          id="init"
+          name="setup-pref"
+          @value="init"
+          @groupValue={{this.preference}}
+          @onChange={{fn (mut this.preference)}}
+        />
+        <label for="init" data-test-join-init>Create a new Raft cluster</label>
+      </div>
+    </div>
+    <div class="box is-marginless is-shadowless">
+      <Hds::Button @text="Next" type="submit" data-test-next />
+    </div>
+  </form>
+{{/if}}
